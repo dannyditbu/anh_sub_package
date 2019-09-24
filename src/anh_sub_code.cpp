@@ -4,8 +4,8 @@
 #include <sensor_msgs/LaserScan.h>
 #include <math.h>
 
-float linearVelX = 0;
-float angularVelZ = 0;
+float linearVelX = 0.5;
+float angularVelZ = 0.5;
 
 void anhCallback ( const sensor_msgs::LaserScan scanData ){
 	float min = 100000; // a variable to store the smallest range
@@ -16,32 +16,25 @@ void anhCallback ( const sensor_msgs::LaserScan scanData ){
 				//keep updating the smallest distance to a wall
 				min = scanData.ranges[i];
 				indexOfMin = i;
+				if (min < 10){
+					/* The closer the obstacle, the slower we should go and the faster we should turn away
+					 * meaning the closer the obstacle, the lower the linear velocity and the higher the angular velocity
+					 */
+					linearVelX = 0.2 * min;
 
-				/* The closer the obstacle, the slower we should go and the faster we should turn away
-				 * meaning the closer the obstacle, the lower the linear velocity and the higher the angular velocity
-				 */
-				linearVelX = 0.2 * min;
+					/* If the smallest distance is on the half right of ranges[], then turn left
+					 * if on the half left, then turn right
+					 */
+					if (indexOfMin < 134){
+						angularVelZ = exp(-min / 0.1) + 0.5;
+					}
+					else{
+						angularVelZ = -exp(-min / 0.1) - 0.5;
+					}
+				}
 
-				/* If the smallest distance is on the half right of ranges[], then turn left
-				 * if on the half left, then turn right
-				 */
-				if (indexOfMin < 134){
-					angularVelZ = exp(-min / 0.1);
-				}
-				else{
-					angularVelZ = -exp(-min / 0.1);
-				}
 			}
 		}
-	}
-	linearVelX = 0.2 * min;
-	if (indexOfMin < 134){
-		//angularVelZ = exp(-min / 0.01);
-		angularVelZ = 1.5 * (cos(3.1415/2*(min/4.0 + 1.0)) + 1.0);
-	}
-	else{
-		//angularVelZ = -exp(-min / 0.01);
-		angularVelZ = -1.5 * (cos(3.1415/2*(min/4.0 + 1.0)) + 1.0);
 	}
 }
 
