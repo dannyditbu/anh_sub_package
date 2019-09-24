@@ -46,7 +46,7 @@ int main ( int argc , char ** argv ){
 	
 	ros::Publisher scan_pub = n.advertise<geometry_msgs::Twist>("robot0/cmd_vel", 1);
 	ros::Rate loop_rate(10000);
-	ros::Subscriber scan_sub;
+	ros::Subscriber scan_sub = n.subscribe("robot0/laser_1", 1, anhCallback);
 	
 	/* Create a velocity to control robot
 	 * including linear and angular velocity
@@ -55,7 +55,6 @@ int main ( int argc , char ** argv ){
 	
 	while (ros::ok()){
 		ros::spinOnce();
-		scan_sub = n.subscribe("robot0/laser_1", 1, anhCallback);
 		controlVel.linear.x = linearVelX;
 		controlVel.angular.z = angularVelZ; 
 		scan_pub.publish(controlVel);
