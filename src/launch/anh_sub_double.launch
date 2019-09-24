@@ -1,0 +1,4 @@
+<launch>
+	<include file="$(find stdr_lauchers)/server_with_map_and_gui.launch"/>
+	<node pkg="anh_sub_package" type="anh_sub_node" name="anh_sub_node" />
+</launch>

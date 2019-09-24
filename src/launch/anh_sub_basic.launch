@@ -1,0 +1,3 @@
+<launch>
+	<node pkg="anh_sub_package" type="anh_sub_node" name="anh_sub_node" />
+</launch>
